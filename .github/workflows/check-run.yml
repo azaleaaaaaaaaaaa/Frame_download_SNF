@@ -1,0 +1,33 @@
+name: check if workflow is running
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */2 * * *" 
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check
+        id: check-id
+        run: |
+          WORKFLOW_NAME="down-bot.yml"
+
+          REPO="${{ github.repository }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+
+          # Fazer a requisição à API do GitHub para obter a execução mais recente do workflow
+          response=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW_NAME/runs?branch=$BRANCH_NAME&status=in_progress)
+
+          # Verificar se o workflow está em andamento
+          if [[ "$response" == *"\"total_count\": 0"* ]]; then
+            echo "O workflow não está rodando"
+            exit 0
+          else
+            echo "O workflow ainda está rodando"
+            exit 1
+          fi
