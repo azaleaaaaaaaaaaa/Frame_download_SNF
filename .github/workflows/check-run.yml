@@ -1,4 +1,4 @@
-name: check if workflow is running
+name: check if down-bot.yml is running
 
 on:
   workflow_dispatch:
@@ -26,8 +26,15 @@ jobs:
           # Verificar se o workflow está em andamento
           if [[ "$response" == *"\"total_count\": 0"* ]]; then
             echo "O workflow não está rodando"
-            exit 0
+            
+
+            curl -X POST \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -d '{"ref":$BRANCH_NAME' \
+              "https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW_NAME/dispatches"
+
           else
-            echo "O workflow ainda está rodando"
+            echo "O workflow ja esta rodando"
             exit 1
           fi

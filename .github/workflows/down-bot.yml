@@ -3,6 +3,11 @@ name: down-bot
 on:
   workflow_dispatch:
 
+
+concurrency:
+  group: down-bot-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   run-down-bot:
     runs-on: ubuntu-latest
