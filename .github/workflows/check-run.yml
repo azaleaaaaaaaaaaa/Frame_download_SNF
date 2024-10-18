@@ -9,7 +9,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: check
+      - name: Check if down-bot.yml is running
         id: check-id
         run: |
           WORKFLOW_NAME="down-bot.yml"
@@ -21,20 +21,22 @@ jobs:
           response=$(curl -s \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW_NAME/runs?branch=$BRANCH_NAME&status=in_progress)
+            "https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW_NAME/runs?branch=$BRANCH_NAME&status=in_progress")
 
           # Verificar se o workflow está em andamento
           if [[ "$response" == *"\"total_count\": 0"* ]]; then
             echo "O workflow não está rodando"
             
-
+            # Acionar o workflow down-bot.yml
             curl -X POST \
               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
               -H "Accept: application/vnd.github.v3+json" \
-              -d "{\"ref\":\"$BRANCH_NAME\"}"
+              -d "{\"ref\":\"$BRANCH_NAME\"}" \
               "https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW_NAME/dispatches"
+            
+            echo "Down Bot acionado com sucesso!"
 
           else
-            echo "O workflow ja esta rodando"
+            echo "O workflow já está rodando"
             exit 1
           fi
