@@ -1,14 +1,15 @@
-name: down-bot
+name: down-bot # Esse bot é responsável por rodar os scripts de download dos frames 
 
 on:
-  workflow_dispatch:
+    workflow_dispatch:
 
 
-concurrency:
+concurrency:  # previne que o workflow seja executado em paralelo
   group: down-bot-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
+  
   run-down-bot:
     runs-on: ubuntu-latest
 
@@ -21,3 +22,9 @@ jobs:
           echo "Iniciando o Down Bot..."
           sleep 300 
           echo "Down Bot concluído."
+      
+
+
+        
+
+

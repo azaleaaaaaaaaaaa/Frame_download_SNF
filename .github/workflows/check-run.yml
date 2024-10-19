@@ -1,9 +1,9 @@
-name: check if down-bot.yml is running
+name: check run # Checa se o workflow down-bot.yml está em andamento, se não, ele aciona um novo workflow
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */2 * * *" 
+    - cron: "0 */3 * * *" 
 
 jobs:
   check:
