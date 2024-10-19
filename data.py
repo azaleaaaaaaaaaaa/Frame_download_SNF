@@ -14,4 +14,4 @@ IMG_TOKEN: str = environ.get('IMG_TOKEN')
 
 
 #github
-url: str = f'https://raw.githubusercontent.com/{REPO_OWNER}/{REPO}/{BRANCH}/{FRAMES_FOLDER}'
+github_url: str = f'https://raw.githubusercontent.com/{REPO_OWNER}/{REPO}/{BRANCH}/{FRAMES_FOLDER}'

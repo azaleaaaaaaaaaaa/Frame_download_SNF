@@ -12,17 +12,22 @@ def main():
     #obtem o ID da página do Facebook
     page_id.get_id()
     #busca comentarios relacionados à página
-    comments_list = get_comments()
+    comments_list: list = get_comments()
     # busca comentários
-    found_comments = finder(comments_list)
+    finder(comments_list)
     # obtem imagens relacionadas aos comentários
-    found_comments = get_img(found_comments)
+    get_img(comments_list)
     #legendar as imagens
-    found_comments = subtitle(found_comments)
+    subtitle(comments_list)
+
+
+    for comment in comments_list:
+        print(comment)
 
     #responder aos comentários
-    respond(found_comments)
+    respond(comments_list)
 
+    print('Finished!')
 
 
 

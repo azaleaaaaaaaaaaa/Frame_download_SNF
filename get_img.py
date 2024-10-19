@@ -1,12 +1,12 @@
 import httpx
-from data import url
+from data import github_url
 
 
 def down_img(frame_number: int) -> str:
 
     retries: int = 0
     while retries < 3:
-        response =httpx.get(f'{url}/frame_{frame_number}.jpg', timeout=5)
+        response = httpx.get(f'{github_url}/frame_{frame_number}.jpg', timeout=7)
 
         if response.status_code == 200:
             with open(f'images/frame_{frame_number}.jpg', 'wb') as file:
@@ -16,16 +16,17 @@ def down_img(frame_number: int) -> str:
             print(f'Error: {response.status_code} {response.content}')
             retries += 1
 
-def get_img(found_comments: list) -> str:
+def get_img(comments_list: list) -> str:
 
-    for comment in found_comments:
-        frame_number = comment['frame_number']
-        file_path = down_img(frame_number)
+    for comment in comments_list:
+
+        if 'frame_number' in comment:
+            frame_number = comment['frame_number']
+            file_path = down_img(frame_number)
     
-        if file_path:
-            comment['file_path'] = file_path
-        else:
-            print(f'Error: Failed to download image for frame {frame_number}')
+            if file_path:
+                comment['file_path'] = file_path
+            else:
+                print(f'Error: Failed to download image for frame {frame_number}')
     
-    return found_comments
 

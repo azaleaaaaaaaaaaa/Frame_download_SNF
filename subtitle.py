@@ -2,9 +2,9 @@ import subprocess
 
 
 
-def subtitle(found_comments: list) -> list:
+def subtitle(comments_list: list) -> list:
 
-    for comment in found_comments:
+    for comment in comments_list:
 
         if 'subtitle' in comment:
             subtitle = comment['subtitle']
@@ -24,6 +24,8 @@ def subtitle(found_comments: list) -> list:
                 subtitle = ' '.join(partes)
                 backgound_size = '0x340'
             
+
+            file_path = f'{comment['file_path']}'
             gravity = '-gravity North'
             font =   '-font font/Cooper.otf'                     
             font_size = '-pointsize 100'                         
@@ -32,8 +34,13 @@ def subtitle(found_comments: list) -> list:
             annotate = '-annotate +0+20'
             output_name = f'images/frame_{comment["frame_number"]}.jpg'
             
-            subprocess.run(f'convert {comment["file_path"]} {gravity} {backgound_color} {splice} {font} {font_size} {annotate} "{subtitle}" {output_name}')
+            subprocess.run(f'magick {file_path} {gravity} {backgound_color} {splice} {font} {font_size} {annotate} "{subtitle}" {output_name}')
                             #magick for windows
                             #convert for linux
-            
-    return found_comments
+
+
+
+# comments_list = [
+#     {'file_path': 'images/frame_1.jpg', 'frame_number': '1', 'comment': '-t "Subtitulo 1"', 'subtitle': 'Subtitulo 1'},
+# ]
+# subtitle(comments_list)

@@ -42,15 +42,16 @@ def publish(foto_id: str, id_comentario: str, message: str):
             'access_token': data.FB_TOKEN
         }
         response = httpx.post(f'{data.fb_url}/{id_comentario}/comments', data=dados, timeout=10)
-    
+        
         if response.status_code == 200:
-            return response.status_code
+            id = response.json().get('id')
+            if id:
+                return id
         else:
             print('erro ao enviar a imagem pro fb', response.status_code, response.text)
             retries += 1
             sleep(3)
 
-    return response.json()
 
 
 
@@ -66,6 +67,7 @@ def facebook_manager(found_comments):
             if foto_id:
                 message = f'{user.message} {link}'
                 response = publish(foto_id, id_comentarios, message)
+
                 return response
     
     return None
