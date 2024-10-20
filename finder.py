@@ -1,11 +1,11 @@
-from user import download, help
+from user import download, gif, help
 from data import fb_url, FB_TOKEN
 from manage_ids import remove_replyed_ids
 from os import environ
 from time import sleep
 import httpx
 import re
-
+from make_gif import call_make_gif
 
 
 
@@ -67,6 +67,12 @@ def finder(comments_list: list) -> None:
         if download in comment['comment']:
             get_subtitle(comment)
             get_frame(comment)
+        
+        if gif in comment['comment']:
+            get_frame(comment)
+            call_make_gif(comment)
+
+
         
         else:
             comments_list.remove(comment)

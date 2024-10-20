@@ -2,21 +2,27 @@ import httpx
 import data
 from time import sleep
 import user
+import os
 
 
 def upload_img(file_path: str): 
     retries = 0
     while retries < 3:
         try:
+            # Verifica a extensão do arquivo para definir o tipo MIME e o endpoint correto
+            if file_path.endswith('.jpg'):
+                mimetype = 'image/jpeg'
+                endpoint = f'{data.fb_url}/me/photos'
+            
             # Verificar se o caminho fornecido está correto
-            with open(f'{file_path}', 'rb') as frame:
-                files = {'file': (file_path, frame, 'image/jpeg')}
+            with open(file_path, 'rb') as frame:
+                files = {'file': (os.path.basename(file_path), frame, mimetype)}
                 
                 dados = {
                     'published': 'false',
-                    'access_token': data.FB_TOKEN
+                    'access_token': data.FB_TOKEN  # Use o FB_TOKEN diretamente
                 }
-                response = httpx.post(f'{data.fb_url}/me/photos', files=files, data=dados, timeout=10)
+                response = httpx.post(endpoint, files=files, data=dados, timeout=15)
                 
                 if response.status_code == 200:
                     foto_id = response.json().get('id')
@@ -30,7 +36,7 @@ def upload_img(file_path: str):
         except Exception as e:
             print(f'Erro ao fazer upload: {e}')
             retries += 1
-            sleep(3)    
+            sleep(3)
 
 
 def publish(foto_id: str, id_comentario: str, message: str):
@@ -48,10 +54,9 @@ def publish(foto_id: str, id_comentario: str, message: str):
             if id:
                 return id
         else:
-            print('erro ao enviar a imagem pro fb', response.status_code, response.text)
+            print('erro ao postar a imagem pro fb', response.status_code, response.text)
             retries += 1
             sleep(3)
-
 
 
 

@@ -7,13 +7,12 @@ FRAMES_FOLDER: str =  'frames'
 
 
 # message apresentada junto a image de resposta
-message: str = 'Filename: Episode {EP}, Frame {FRAME}\n\n \
-                Resolution: 1920x1080\n \
-                Link: {LINK}'
+message: str = 'Filename: Episode {EP}, Frame {FRAME}\n\nResolution: 1920x1080\nLink: {LINK}'
 
 
 # commands
 download: str =  '!dl'
+gif: str =       '!gif'
 help: str =      '!help'
 
 
