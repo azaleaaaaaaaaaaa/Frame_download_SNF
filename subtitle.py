@@ -1,3 +1,4 @@
+import os
 from wand.image import Image
 from wand.color import Color
 from wand.drawing import Drawing
@@ -8,6 +9,7 @@ def subtitle(comments_list: list) -> list:
             subtitle = comment['subtitle']
             partes = subtitle.split(' ')
 
+            # Definindo o tamanho do fundo com base no número de partes
             if len(partes) <= 5:
                 background_size = (0, 150)
             elif len(partes) <= 10:
@@ -22,6 +24,11 @@ def subtitle(comments_list: list) -> list:
 
             file_path = comment['file_path']
             output_name = f'./images/frame_{comment["frame_number"]}_{comment["id"]}.jpg'
+
+            # Verificar se o arquivo existe
+            if not os.path.exists(file_path):
+                print(f"Arquivo não encontrado: {file_path}")
+                continue  # Pula para o próximo comentário
 
             # Abrir a imagem original
             with Image(filename=file_path) as img:
@@ -46,3 +53,4 @@ def subtitle(comments_list: list) -> list:
 
             comment['file_path'] = output_name
 
+    return comments_list
