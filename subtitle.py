@@ -35,7 +35,7 @@ def subtitle(comments_list: list) -> list:
             output_name = f'images/frame_{comment["frame_number"]}_{comment["id"]}.jpg'
                             #magick for windows
                             #convert for linux
-            subprocess.run(f'magick {file_path} {gravity} {backgound_color} {splice} {font} {font_size} {annotate} "{subtitle}" {output_name}')
+            subprocess.run(f'convert {file_path} {gravity} {backgound_color} {splice} {font} {font_size} {annotate} "{subtitle}" {output_name}')
             comment['file_path'] = output_name
 
 
