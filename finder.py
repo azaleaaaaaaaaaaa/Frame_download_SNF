@@ -1,5 +1,6 @@
 from user import download, help
 from data import fb_url, FB_TOKEN
+from manage_ids import remove_replyed_ids
 from os import environ
 from time import sleep
 import httpx
@@ -18,14 +19,20 @@ def get_post_title(comment: dict) -> dict:
             
             if response.status_code == 200:
                 response_data = response.json()
+                
                 if 'message' in response_data:
                     number = re.findall(r'Frame\s*(\d+)', response_data['message'])
+                    ep_number = re.findall(r'Episode\s*(\d+)', response_data['message'])
+                    
                     if number:
                         comment['frame_number'] = number[0]
-                        break
-     
-            
-        
+
+                    
+                    if ep_number:
+                        comment['episode'] = ep_number[0]  # Acessar o primeiro elemento
+                    
+                    break  # Certifique-se de que o break está aqui
+
         except httpx.RequestError as e:
             print(f"Request error: {e}. Retrying ({retries + 1}/3)...")
         
@@ -33,24 +40,17 @@ def get_post_title(comment: dict) -> dict:
         sleep(3)
     
 
-
-def remove_replyed_ids(comments_list: list) -> None:
-    with open('replyed_ids.txt', 'r', encoding='utf-8') as file:
-        replyed_ids = file.read().splitlines()
-        
-    for comment in comments_list:
-        if comment['id'] in replyed_ids:
-            comments_list.remove(comment)
-    
-
 def get_frame(comment: dict) -> None:   
-    number = re.findall(r'-\s*f\s*(\d+)', comment['comment'])
+    frame_number = re.findall(r'-\s*f\s*(\d+)', comment['comment'])
     
-    if not number:
+    
+    if not frame_number:
         get_post_title(comment)
     
     else:
-        comment['frame_number'] = number[0]        
+        comment['frame_number'] = frame_number[0].lstrip('0')
+        comment['episode'] = 'this_episode'
+
         
 
 def get_subtitle(comment: dict) -> str:

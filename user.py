@@ -7,9 +7,9 @@ FRAMES_FOLDER: str =  'frames'
 
 
 # message apresentada junto a image de resposta
-message: str = 'Filename: Episode 23, Frame 285\n\n \
+message: str = 'Filename: Episode {EP}, Frame {FRAME}\n\n \
                 Resolution: 1920x1080\n \
-                Link:'
+                Link: {LINK}'
 
 
 # commands

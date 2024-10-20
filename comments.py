@@ -10,7 +10,7 @@ def get_comments() -> list:
 
     try:
         retries = 0
-        while retries < 1:
+        while retries < 5:
             response = httpx.get(f'{fb_url}/{environ.get("PAGE_ID")}/posts', params=dados, timeout=10)
 
             if response.status_code == 200:
@@ -21,8 +21,7 @@ def get_comments() -> list:
                         for comment in comments_data:
                             if 'id' in comment:
                                 comments_list.append({'comment': comment['message'], 'id': comment['id']})
-
-                
+            
                 # Check for pagination
                 if 'paging' in response_data and 'next' in response_data['paging']:
                     after = response_data['paging']['cursors'].get('after', '')
@@ -32,9 +31,8 @@ def get_comments() -> list:
                     break
             
             else:
-                    print(f"Failed to get posts: {response.status_code}")
-                    break
-                
+                print(f"Failed to get posts: {response.status_code}")
+                          
             sleep(1) # Wait for 1 seconds before making the next request
 
     except httpx._exceptions as e:

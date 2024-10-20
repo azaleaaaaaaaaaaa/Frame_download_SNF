@@ -1,4 +1,5 @@
 import httpx
+from time import sleep
 from data import github_url
 
 
@@ -15,6 +16,7 @@ def down_img(frame_number: int) -> str:
         else:
             print(f'Error: {response.status_code} {response.content}')
             retries += 1
+            sleep(3)
 
 def get_img(comments_list: list) -> str:
 

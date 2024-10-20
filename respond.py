@@ -1,15 +1,18 @@
 from imgBB import imgBB
 from facebook import facebook_manager
+from manage_ids import save_id
 
 
 
 def respond(found_comments: list):
 
-    #mover o loop for pra ca
-    found_comments = imgBB(found_comments)
-    response_fb_id = facebook_manager(found_comments)
+    for comment in found_comments:
 
-    if response_fb_id:
-        with open('replyed_ids.txt', 'a', encoding='utf-8') as file:
-            file.write(f'{response_fb_id}\n')
+        if 'file_path' in comment and 'frame_number' in comment:
+            imgBB(comment)
+            facebook_manager(comment)
+
+            if comment['response_id']:
+                save_id(comment) # salva o id do comentario respondido
+
 

@@ -55,21 +55,22 @@ def publish(foto_id: str, id_comentario: str, message: str):
 
 
 
-def facebook_manager(found_comments):
-    for comment in found_comments:
-        if 'file_path' in comment and 'id' in comment and 'link' in comment:
-            file_path = comment['file_path']
-            id_comentarios = comment['id']
-            link = comment['link']
+def facebook_manager(comment: dict) -> None:
 
-            foto_id = upload_img(file_path)
+    if 'file_path' in comment and 'id' in comment and 'link' in comment:
+        file_path = comment['file_path']
+        id_comentarios = comment['id']
+        link = comment['link']
 
-            if foto_id:
-                message = f'{user.message} {link}'
-                response = publish(foto_id, id_comentarios, message)
+        foto_id = upload_img(file_path)
 
-                return response
-    
-    return None
+        if foto_id:
+            message = f'{user.message.format(EP=comment["episode"], FRAME=comment["frame_number"], LINK=link)}'
+            response = publish(foto_id, id_comentarios, message)
+
+            if response:
+                comment['response_id'] = response
+
+
 
 

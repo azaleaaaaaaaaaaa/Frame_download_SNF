@@ -6,7 +6,7 @@ def subtitle(comments_list: list) -> list:
 
     for comment in comments_list:
 
-        if 'subtitle' in comment:
+        if 'subtitle' in comment and 'file_path' in comment and 'frame_number' in comment:
             subtitle = comment['subtitle']
 
             partes = subtitle.split(' ')
@@ -32,11 +32,11 @@ def subtitle(comments_list: list) -> list:
             backgound_color = '-background White'
             splice = f'-splice {backgound_size}'
             annotate = '-annotate +0+20'
-            output_name = f'images/frame_{comment["frame_number"]}.jpg'
-            
-            subprocess.run(f'magick {file_path} {gravity} {backgound_color} {splice} {font} {font_size} {annotate} "{subtitle}" {output_name}')
+            output_name = f'images/frame_{comment["frame_number"]}_{comment["id"]}.jpg'
                             #magick for windows
                             #convert for linux
+            subprocess.run(f'convert {file_path} {gravity} {backgound_color} {splice} {font} {font_size} {annotate} "{subtitle}" {output_name}')
+            comment['file_path'] = output_name
 
 
 

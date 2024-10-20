@@ -1,8 +1,7 @@
-name: down-bot # Esse bot é responsável por rodar os scripts de download dos frames 
+name: down-bot  # Esse bot é responsável por rodar os scripts de download dos frames 
 
 on:
     workflow_dispatch:
-
 
 concurrency:  # previne que o workflow seja executado em paralelo
   group: down-bot-${{ github.ref }}
@@ -13,18 +12,39 @@ jobs:
   run-down-bot:
     runs-on: ubuntu-latest
 
+    env:
+      FB_TOKEN: ${{ secrets.FB_TOKEN }}
+      IMG_TOKEN: ${{ secrets.IMG_TOKEN }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Simular tarefa do workflow
-        run: |
-          echo "Iniciando o Down Bot..."
-          sleep 300 
-          echo "Down Bot concluído."
+      # Adiciona cache para dependências do Python
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip  # Caminho do cache do pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}  # Chave para identificar o cache
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Configurar Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.11.9
+          architecture: x64 
       
+      - name: Instalar Dependências
+        run: |
+          python -m pip install -r requirements.txt
 
+      - name: Executar script Python
+        run: python main.py
 
-        
-
-
+      - name: Update arquivos
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "updated"
+          repository: .
+          file_pattern: replyed_ids.txt

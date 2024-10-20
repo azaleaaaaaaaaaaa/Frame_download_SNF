@@ -1,2 +1,3 @@
 __pycache__/
-images/
+src/__pycache__
+images/frame_*.jpg

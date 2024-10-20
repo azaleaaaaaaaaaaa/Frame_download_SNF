@@ -22,23 +22,23 @@ def send_img(file_path: str, name: str) -> str:
                 else:
                     print('erro no imgbb', response.status_code)
                     print(response.text)
-                    sleep(5)
+                    sleep(3)
                     retries += 1
                     
         except FileNotFoundError:
             print(f"O arquivo {file_path} não foi encontrado.")
 
 
-def imgBB(found_comments: list) -> list:
-    for comment in found_comments:
-        if 'file_path' in comment and 'frame_number' in comment:
-            file_path = comment['file_path']
-            frame_number = comment['frame_number']
-            link = send_img(file_path, frame_number)
+def imgBB(comment: dict) -> None:
 
-            if link:
-                comment['link'] = link
-    
-    return found_comments
+    if 'file_path' in comment and 'frame_number' in comment:
+        file_path = comment['file_path']
+        frame_number = comment['frame_number']
+        link = send_img(file_path, frame_number)
+
+        if link:
+            comment['link'] = link
+
+
     
  

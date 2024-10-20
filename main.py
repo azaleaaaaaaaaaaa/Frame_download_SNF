@@ -1,16 +1,16 @@
-import page_id
+from page_id import get_id
 from get_img import get_img
 from comments import get_comments
 from finder import finder
 from subtitle import subtitle
 from respond import respond
-
-
+from time import time, sleep
+import os, sys
 
 
 def main():
     #obtem o ID da página do Facebook
-    page_id.get_id()
+    get_id()
     #busca comentarios relacionados à página
     comments_list: list = get_comments()
     # busca comentários
@@ -19,10 +19,6 @@ def main():
     get_img(comments_list)
     #legendar as imagens
     subtitle(comments_list)
-
-
-    for comment in comments_list:
-        print(comment)
 
     #responder aos comentários
     respond(comments_list)
@@ -33,6 +29,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    start: float = time()
+    while (time() - start) < (180 * 60):  # 3 hours
+        main()
+        sleep(50)
 
 
