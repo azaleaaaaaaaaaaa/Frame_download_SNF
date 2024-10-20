@@ -25,7 +25,7 @@ def subtitle(comments_list: list) -> list:
                 backgound_size = '0x340'
             
 
-            file_path = f"{comment['file_path']}"
+            file_path = f'{comment["file_path"]}'
             gravity = '-gravity North'
             font =   '-font font/Cooper.otf'                     
             font_size = '-pointsize 100'                         

@@ -27,21 +27,6 @@ jobs:
         with:
           python-version: 3.11.9
           architecture: x64 
-
-      - name: Verificar qual comando ImageMagick está usando (convert ou magick)
-        run: |
-          if command -v magick &> /dev/null
-          then
-            echo "ImageMagick está usando o comando 'magick'"
-            magick --version
-          elif command -v convert &> /dev/null
-          then
-            echo "ImageMagick está usando o comando 'convert'"
-            convert --version
-          else
-            echo "ImageMagick não está instalado ou nenhum comando foi encontrado"
-            exit 1
-          fi
       
       - name: Instalar Dependências
         run: |
