@@ -5,7 +5,6 @@ from finder import finder
 from subtitle import subtitle
 from respond import respond
 from time import time, sleep
-import os, sys
 
 
 def main():
