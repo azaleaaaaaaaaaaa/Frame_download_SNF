@@ -32,7 +32,7 @@ def subtitle(comments_list: list) -> list:
             backgound_color = '-background White'
             splice = f'-splice {backgound_size}'
             annotate = '-annotate +0+20'
-            output_name = f'images/frame_{comment["frame_number"]}_{comment["id"]}.jpg'
+            output_name = f'./images/frame_{comment["frame_number"]}_{comment["id"]}.jpg'
                             #magick for windows
                             #convert for linux
             subprocess.run(f'convert {file_path} {gravity} {backgound_color} {splice} {font} {font_size} {annotate} "{subtitle}" {output_name}')

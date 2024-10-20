@@ -20,8 +20,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-
-
       - name: Configurar Python
         uses: actions/setup-python@v3
         with:
@@ -32,8 +30,17 @@ jobs:
         run: |
           python -m pip install -r requirements.txt
 
-      - name: Executar script Python
-        run: python main.py
+      - name: Executar script Python e capturar erros
+        run: |
+          python main.py > output.log 2> error.log || (echo "Falha ao executar main.py"; cat error.log)
+
+      - name: Upload dos logs como artefatos
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-logs
+          path: |
+            output.log
+            error.log
 
       - name: Update arquivos
         uses: stefanzweifel/git-auto-commit-action@v4
