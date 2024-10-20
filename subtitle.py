@@ -1,8 +1,9 @@
 import subprocess
 
 
-def subtitle(comment: dict) -> None:
+def subtitle(comment_list: list) -> None:
 
+    for comment in comment_list:
         if 'subtitle' in comment and 'file_path' in comment and 'frame_number' in comment:
             subtitle = comment['subtitle']
 
@@ -55,14 +56,3 @@ def subtitle(comment: dict) -> None:
             except subprocess.CalledProcessError as e:
                 print(f"Ocorreu um erro ao executar o comando: {e}")
 
-
-
-# comments_list = [
-#     {
-#         'subtitle': 'Esta é uma legenda curta.',
-#         'file_path': 'images/1.jpg',
-#         'frame_number': 1,
-#         'id': 1
-#     }]
-
-# subtitle(comments_list)
