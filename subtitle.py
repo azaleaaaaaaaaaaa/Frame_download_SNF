@@ -1,56 +1,68 @@
-import os
-from wand.image import Image
-from wand.color import Color
-from wand.drawing import Drawing
+import subprocess
 
-def subtitle(comments_list: list) -> list:
-    for comment in comments_list:
+
+def subtitle(comment: dict) -> None:
+
         if 'subtitle' in comment and 'file_path' in comment and 'frame_number' in comment:
             subtitle = comment['subtitle']
-            partes = subtitle.split(' ')
 
-            # Definindo o tamanho do fundo com base no número de partes
+            partes = subtitle.split(' ')
             if len(partes) <= 5:
-                background_size = (0, 150)
+                backgound_size = '0x150'
             elif len(partes) <= 10:
                 partes.insert(5, '\n')
                 subtitle = ' '.join(partes)
-                background_size = (0, 280)
+                backgound_size = '0x280'
             elif len(partes) <= 15:
                 partes.insert(5, '\n')
                 partes.insert(10, '\n')
                 subtitle = ' '.join(partes)
-                background_size = (0, 340)
+                backgound_size = '0x340'
 
             file_path = comment['file_path']
-            output_name = f'./images/frame_{comment["frame_number"]}_{comment["id"]}.jpg'
+            gravity = '-gravity'
+            gravity_value = 'North'
+            font = '-font'
+            font_path = 'font/Cooper.otf'
+            font_size = '-pointsize'
+            font_size_value = '100'
+            backgound_color = '-background'
+            backgound_color_value = 'White'
+            splice = '-splice'
+            splice_value = backgound_size
+            annotate = '-annotate'
+            annotate_position = '+0+20'
+            output_name = f'images/frame_{comment["frame_number"]}_{comment["id"]}.jpg'
 
-            # Verificar se o arquivo existe
-            if not os.path.exists(file_path):
-                print(f"Arquivo não encontrado: {file_path}")
-                continue  # Pula para o próximo comentário
+            # Criação da lista de comandos
+            command = [
+                'convert',  # Ou 'magick' se estiver usando no Windows
+                file_path,
+                gravity, gravity_value,
+                backgound_color, backgound_color_value,
+                splice, splice_value,
+                font, font_path,
+                font_size, font_size_value,
+                annotate, annotate_position,
+                subtitle,
+                output_name
+            ]
 
-            # Abrir a imagem original
-            with Image(filename=file_path) as img:
-                # Criar um fundo para o texto
-                with Image(width=img.width, height=background_size[1], background=Color('white')) as background:
-                    # Compor o fundo e a imagem original
-                    img.composite(background, 0, 0)  # Colocar o fundo na parte superior
+            try:
+                # Executa o comando
+                subprocess.run(command, check=True)
+                comment['file_path'] = output_name
+            except subprocess.CalledProcessError as e:
+                print(f"Ocorreu um erro ao executar o comando: {e}")
 
-                    # Desenhar o texto na imagem
-                    with Drawing() as draw:
-                        draw.font = 'font/Cooper.otf'
-                        draw.font_size = 100
-                        draw.fill_color = Color('black')
 
-                        # Configurar gravity para centralizar o texto na parte superior
-                        img.gravity = 'north'  # Define a gravidade para a parte superior
-                        draw.text(0, 20, subtitle)  # Posição do texto (x, y)
-                        draw(img)
 
-                    # Salvar a imagem resultante
-                    img.save(filename=output_name)
+# comments_list = [
+#     {
+#         'subtitle': 'Esta é uma legenda curta.',
+#         'file_path': 'images/1.jpg',
+#         'frame_number': 1,
+#         'id': 1
+#     }]
 
-            comment['file_path'] = output_name
-
-    return comments_list
+# subtitle(comments_list)
