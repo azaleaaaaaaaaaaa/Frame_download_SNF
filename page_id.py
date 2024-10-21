@@ -30,6 +30,3 @@ def get_id():
         
         if retries == max_retries:
             print("Failed to get page ID after maximum retries")
-
-    else:
-        print("Page ID already set")

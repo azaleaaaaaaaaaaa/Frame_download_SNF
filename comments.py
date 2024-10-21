@@ -9,9 +9,12 @@ def get_comments() -> list:
     dados = {'fields': 'comments.limit(100)', 'limit': '100', 'access_token': data.FB_TOKEN}
 
     try:
-        retries = 0
-        max_retries = 5
-        while retries < max_retries:
+        retries: int = 0
+        max_retries: int = 5
+        max_pages: int = 5
+        current_page: int = 0
+        
+        while retries < max_retries and current_page < max_pages:
             response = httpx.get(f'{data.fb_url}/{os.environ.get("PAGE_ID")}/posts', params=dados, timeout=10)
 
             if response.status_code == 200:
@@ -22,24 +25,24 @@ def get_comments() -> list:
                         for comment in comments_data:
                             if 'id' in comment:
                                 comments_list.append({'comment': comment['message'], 'id': comment['id']})
-            
+                
                 # Check for pagination
-                if 'paging' in response_data and 'next' in response_data['paging']:
+                if response_data.get('paging') and response_data['paging'].get('next'):
                     after = response_data['paging']['cursors'].get('after', '')
                     dados['after'] = after
-                    retries += 1
+                    current_page += 1  # Incrementa a contagem de páginas
                 else:
                     break
             
             else:
                 print(f"Error module comments: status_code != 200 {response.status_code}")
-                          
-            time.sleep(2) # Wait for 2 seconds before making the next request
+                retries += 1
+                time.sleep(2)  # Espera 2 segundos antes de tentar novamente
 
         if retries == max_retries:
             print("Error module comments: Failed to get comments after maximum retries")
 
-    except httpx._exceptions as e:
+    except httpx._exceptions.RequestError as e:
         print(f"Error module comments: {e}")
 
     return comments_list

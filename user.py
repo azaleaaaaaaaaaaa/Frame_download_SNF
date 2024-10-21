@@ -5,9 +5,15 @@ BRANCH: str =         'master'
 FRAMES_FOLDER: str =  'frames'
 
 
-# message apresentada junto a image de resposta
-message_response_frame_download: str = 'Filename: Frame {FRAME}\n\nResolution: 1920x1080\nLink: {LINK}'
-message_response_gif_download: str = 'Filename: Animation\n\nFormat: GIF\nLink: {LINK}'
+# response messages
+message_response_frame_download: str = 'Filename: Frame {FRAME}\n\nResolution: 1920x1080\nDownload Link: {LINK}'
+
+message_response_gif_download: str = 'Filename: Animation\n\nFormat: GIF\nDownload Link: {LINK}'
+
+message_response_helper: str = '\n\nCommands:\n- `!dl` to download the frame in post. Use `-f` to specify the frame number.\n\
+- `!gif` to create a GIF with the next 20 frames.\n\
+- `!help` to view the list of available commands.\n\n{LINK}'
+
 
 
 

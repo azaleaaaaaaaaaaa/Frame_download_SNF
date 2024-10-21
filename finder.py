@@ -8,8 +8,9 @@ import helper
 
 def finder_frame_title_post(comment: dict) -> None:
     post_id = f'{os.environ.get("PAGE_ID")}_{comment["id"].split("_")[0]}'
-    retries = 0
-    max_retries = 3
+    retries: int = 0
+    max_retries: int = 3
+
     while retries < max_retries:
         try:
             response = httpx.get(f'{data.fb_url}/{post_id}', params={'access_token': data.FB_TOKEN}, timeout=5)
@@ -21,13 +22,16 @@ def finder_frame_title_post(comment: dict) -> None:
                     number = re.findall(r'Frame\s*(\d+)', response_data['message'])
                     if number:
                         comment['frame_number'] = number[0]
-                        break
+                        break  # Sai do loop se o frame for encontrado
             else:
                 print(f"Error module finder_frame_title_post: {response.status_code} {response.content}")
+                break  # Sai do loop se não for um erro temporário (ex.: 404, 403)
+
         except httpx.RequestError as e:
-            print(f"Error module finder_frame_title_post: {e}.\n Retrying ({retries + 1}/{max_retries})...")
-            retries += 1
-            time.sleep(3)
+            print(f"Error module finder_frame_title_post: {e}.\nRetrying ({retries + 1}/{max_retries})...")
+        
+        retries += 1
+        time.sleep(3)
 
 
 def finder_frame_number(comment: dict) -> None:
@@ -46,17 +50,18 @@ def finder_subtitle(comment: dict) -> None:
 
 
 def finder_commands(comment: dict) -> None:
-    if user.str_command_download in comment['comment']:
+    if user.str_command_download in comment.get('comment'):
         finder_subtitle(comment)
         finder_frame_number(comment)
     
-    elif user.str_command_gif in comment['comment']:
+    elif user.str_command_gif in comment.get('comment'):
         finder_frame_number(comment)
     
-    elif user.str_command_help in comment['comment']:
-        helper.helper()
+    elif user.str_command_help in comment.get('comment'):
+        helper.helper(comment)
     
     else: # remove o comentário e o id se nao tiver comandos
         comment['comment'] = ''
         comment['id'] = ''
+
     

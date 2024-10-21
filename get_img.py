@@ -28,6 +28,7 @@ async def get_manys_img(session: httpx.AsyncClient, frame_number: str, id: str) 
             return f'images/{id}'
         else:
             return f"Failed to download frame {frame_number}: Status {response.status_code}"
+
     except Exception as e:
         return f"Error downloading frame {frame_number}: {str(e)}"
 
@@ -35,7 +36,7 @@ async def get_manys_img(session: httpx.AsyncClient, frame_number: str, id: str) 
 # Função principal para gerar o gif
 async def img_fetch(comment: dict) -> None:
 
-    if user.str_command_download in comment['comment']:
+    if user.str_command_download in comment.get('comment'):
         get_one_img(comment)
 
     elif user.str_command_gif in comment['comment']:
@@ -54,7 +55,7 @@ async def img_fetch(comment: dict) -> None:
 
 
 def get_img(comment: dict) -> None:
-    if 'comment' in comment and 'id' in comment:
+    if comment.get('comment') and comment.get('id') and comment.get('frame_number'):
         asyncio.run(img_fetch(comment))
 
 

@@ -9,7 +9,6 @@ import user
 def post_fb(comment: dict) -> None:
 
     if comment['file_path'].endswith('.gif'):
-        print("Arquivo é um GIF, upload de imagem não será realizado.")
         comment['foto_id'] = ''
         return
 
@@ -51,16 +50,19 @@ def publish_fb(comment: dict) -> None:
     retries = 0
     while retries < 3:
 
-        if comment['file_path'].endswith('.jpg'):
+        if comment.get('file_path') and comment['file_path'].endswith('.jpg'):
             message = f'{user.message_response_frame_download.format(FRAME=comment["frame_number"], LINK=comment["link"])}'
         else:
-            message = f'{user.message_response_gif_download.format(LINK=comment["link"])}'
+            if comment.get('message') and comment['message'].startswith('Helper'):
+                message = comment['message'] + f'{user.message_response_helper.format(LINK=comment["link"])}'
+            else:
+                message = f'{user.message_response_gif_download.format(LINK=comment["link"])}'
 
         dados = {
             'message': message,
             'access_token': data.FB_TOKEN
         }
-        if comment['foto_id']:
+        if comment.get('foto_id'):
             dados['attachment_id'] = comment['foto_id']
             
         response = httpx.post(f'{data.fb_url}/{comment["id"]}/comments', data=dados, timeout=10)

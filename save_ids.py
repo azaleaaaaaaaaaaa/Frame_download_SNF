@@ -7,6 +7,7 @@
 def save_id(comment: dict) -> None:
     with open('replyed_ids.txt', 'a', encoding='utf-8') as file:
         file.write(f'{comment["id"]}\n')
+        print('comment id: {}'.format(comment["id"]), 'replyed and saved')
 
 
 
@@ -18,7 +19,7 @@ def remove_replyed_ids(comments_list: list) -> None:
             replyed_ids = file.read().splitlines()
             
             for comment in reversed(comments_list): 
-                if comment['id'] in replyed_ids:
+                if comment.get('id') in replyed_ids:
                     comments_list.remove(comment)
     
     except FileNotFoundError:
