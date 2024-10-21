@@ -7,8 +7,6 @@ GIPHY_API_KEY = 'token da giphy'
 
 
 
-
-
 Command: !dl
 Description: Returns the download link for the specified frame.
 

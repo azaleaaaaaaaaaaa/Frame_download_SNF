@@ -20,7 +20,7 @@ def upload_gif(comment: dict):
                 response_data = response.json()
                 link = 'https://giphy.com/gifs/' + response_data.get("data", {}).get("id", '')
                 comment['link'] = link
-                print(f'GIF enviado com sucesso! ID da GIF: {link}')
+                print(f'GIF criada com sucesso: {link}')
 
             else:
                 print(f'Erro ao enviar a GIF: {response.status_code}, {response.text}')
@@ -29,26 +29,27 @@ def upload_gif(comment: dict):
 
 
 def make_gif(comment: dict) -> None:
-    file_path = comment.get('file_path')
-    if file_path:
-        image_magick_command = 'magick' if os.name == 'nt' else 'convert'
-        commands = [
-            image_magick_command,
-            '-delay', '30',
-            '-loop', '0',
-            f'{file_path}/frame*.jpg',
-            '-colors', '32',
-            '-fuzz', '10%',
-            '-layers', 'optimize',
-            f'{file_path}/animation.gif',
-        ]
 
-        try:
-            subprocess.run(commands, check=True)
-            comment['file_path'] = f'{file_path}/animation.gif'
-            print('GIF criado com sucesso')
-        except subprocess.CalledProcessError as e:
-            print(f'Erro ao criar o GIF: {e}')
+    if data.GIPHY_API_KEY:
+        file_path = comment.get('file_path')
+        if file_path:
+            image_magick_command = 'magick' if os.name == 'nt' else 'convert'
+            commands = [
+                image_magick_command,
+                '-delay', '30',
+                '-loop', '0',
+                f'{file_path}/frame*.jpg',
+                '-colors', '32',
+                '-fuzz', '10%',
+                '-layers', 'optimize',
+                f'{file_path}/animation.gif',
+            ]
 
-        upload_gif(comment)
+            try:
+                subprocess.run(commands, check=True)
+                comment['file_path'] = f'{file_path}/animation.gif'
+            except subprocess.CalledProcessError as e:
+                print(f'Erro ao criar o GIF: {e}')
+
+            upload_gif(comment)
 
