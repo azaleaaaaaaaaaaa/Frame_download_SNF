@@ -45,5 +45,6 @@ def get_comments() -> list:
     except httpx._exceptions.RequestError as e:
         print(f"Error module comments: {e}")
 
+    print(f'size of comments list: {len(comments_list)}')
     return comments_list
 

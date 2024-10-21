@@ -38,5 +38,5 @@ jobs:
 
           else
             echo "O workflow já está rodando"
-            exit 1
+            exit 0
           fi

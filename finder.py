@@ -50,14 +50,14 @@ def finder_subtitle(comment: dict) -> None:
 
 
 def finder_commands(comment: dict) -> None:
-    if user.str_command_download in comment.get('comment'):
+    if user.str_command_download.lower() in comment.get('comment', '').lower():
         finder_subtitle(comment)
         finder_frame_number(comment)
     
-    elif user.str_command_gif in comment.get('comment'):
+    elif user.str_command_gif.lower() in comment.get('comment', '').lower():
         finder_frame_number(comment)
     
-    elif user.str_command_help in comment.get('comment'):
+    elif user.str_command_help.lower() in comment.get('comment', '').lower():
         helper.helper(comment)
     
     else: # remove o comentário e o id se nao tiver comandos
