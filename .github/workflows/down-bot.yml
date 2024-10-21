@@ -15,6 +15,7 @@ jobs:
     env:
       FB_TOKEN: ${{ secrets.FB_TOKEN }}
       IMG_TOKEN: ${{ secrets.IMG_TOKEN }}
+      GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
 
     steps:
       - name: Checkout Repository
