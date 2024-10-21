@@ -1,22 +1,28 @@
 import httpx
-import data
-from time import sleep
-import user
 import os
+import time
+import data
+import user
 
 
-def upload_img(file_path: str): 
+
+def post_fb(comment: dict) -> None:
+
+    if comment['file_path'].endswith('.gif'):
+        print("Arquivo é um GIF, upload de imagem não será realizado.")
+        comment['foto_id'] = ''
+        return
+
     retries = 0
     while retries < 3:
         try:
-            # Verifica a extensão do arquivo para definir o tipo MIME e o endpoint correto
-            if file_path.endswith('.jpg'):
-                mimetype = 'image/jpeg'
-                endpoint = f'{data.fb_url}/me/photos'
+            
+            mimetype = 'image/jpeg'
+            endpoint = f'{data.fb_url}/me/photos'
             
             # Verificar se o caminho fornecido está correto
-            with open(file_path, 'rb') as frame:
-                files = {'file': (os.path.basename(file_path), frame, mimetype)}
+            with open(comment['file_path'], 'rb') as frame:
+                files = {'file': (os.path.basename(comment['file_path']), frame, mimetype)}
                 
                 dados = {
                     'published': 'false',
@@ -24,58 +30,47 @@ def upload_img(file_path: str):
                 }
                 response = httpx.post(endpoint, files=files, data=dados, timeout=15)
                 
-                if response.status_code == 200:
-                    foto_id = response.json().get('id')
-                    if foto_id:
-                        return foto_id
-                else:
-                    print(f'Erro ao fazer upload: {response.status_code}, {response.text}')
-                    retries += 1
-                    sleep(3)
+            if response.status_code == 200:
+                foto_id = response.json().get('id')
+                if foto_id:
+                    comment['foto_id'] = foto_id
+                    break
+            else:
+                print(f'Erro ao fazer upload: {response.status_code}, {response.text}')
+                retries += 1
+                time.sleep(3)
             
         except Exception as e:
             print(f'Erro ao fazer upload: {e}')
             retries += 1
-            sleep(3)
+            time.sleep(3)
 
 
-def publish(foto_id: str, id_comentario: str, message: str):
+
+def publish_fb(comment: dict) -> None:
     retries = 0
     while retries < 3:
+
+        if comment['file_path'].endswith('.jpg'):
+            message = f'{user.message_response_frame_download.format(FRAME=comment["frame_number"], LINK=comment["link"])}'
+        else:
+            message = f'{user.message_response_gif_download.format(LINK=comment["link"])}'
+
         dados = {
             'message': message,
-            'attachment_id': foto_id,
             'access_token': data.FB_TOKEN
         }
-        response = httpx.post(f'{data.fb_url}/{id_comentario}/comments', data=dados, timeout=10)
+        if comment['foto_id']:
+            dados['attachment_id'] = comment['foto_id']
+            
+        response = httpx.post(f'{data.fb_url}/{comment["id"]}/comments', data=dados, timeout=10)
         
         if response.status_code == 200:
             id = response.json().get('id')
             if id:
-                return id
+                comment['response_id'] = id
+                break
         else:
             print('erro ao postar a imagem pro fb', response.status_code, response.text)
             retries += 1
-            sleep(3)
-
-
-
-def facebook_manager(comment: dict) -> None:
-
-    if 'file_path' in comment and 'id' in comment and 'link' in comment:
-        file_path = comment['file_path']
-        id_comentarios = comment['id']
-        link = comment['link']
-
-        foto_id = upload_img(file_path)
-
-        if foto_id:
-            message = f'{user.message.format(EP=comment["episode"], FRAME=comment["frame_number"], LINK=link)}'
-            response = publish(foto_id, id_comentarios, message)
-
-            if response:
-                comment['response_id'] = response
-
-
-
-
+            time.sleep(3)

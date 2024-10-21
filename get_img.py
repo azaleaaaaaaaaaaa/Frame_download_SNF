@@ -1,38 +1,62 @@
 import httpx
-from time import sleep
-from data import github_url
-from user import gif
+import asyncio
+import os
+import data
+import user
+
+def get_one_img(comment: dict) -> None:
+    response = httpx.get(f'{data.github_url}/frame_{comment["frame_number"]}.jpg', timeout=10)
+
+    if response.status_code == 200:
+        file_path = f'images/{comment["id"]}/frame_{comment["frame_number"]}.jpg'
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, 'wb') as file:
+            file.write(response.content)
+        comment['file_path'] = file_path
 
 
-def down_img(frame_number: int, id: str) -> str:
 
-    retries: int = 0
-    while retries < 3:
-        response = httpx.get(f'{github_url}/frame_{frame_number}.jpg', timeout=7)
+async def get_manys_img(session: httpx.AsyncClient, frame_number: str, id: str) -> None:
+    try:
+        response = await session.get(f'{data.github_url}/frame_{frame_number}.jpg', timeout=10)
 
         if response.status_code == 200:
-            file_path = f'images/frame_{frame_number}_{id}.jpg'
+            file_path = os.path.join(f'images/{id}/frame_{frame_number}.jpg')
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
             with open(file_path, 'wb') as file:
                 file.write(response.content)
-            return file_path
-        
+            return f'images/{id}'
         else:
-            retries += 1
-            sleep(3)
+            return f"Failed to download frame {frame_number}: Status {response.status_code}"
+    except Exception as e:
+        return f"Error downloading frame {frame_number}: {str(e)}"
 
-def get_img(comments_list: list) -> str:
 
-    for comment in comments_list:
-        if not gif in comment['comment']:
+# Função principal para gerar o gif
+async def img_fetch(comment: dict) -> None:
 
-            if 'frame_number' in comment:
-                frame_number = comment['frame_number']
-                id = comment['id']
-                file_path = down_img(frame_number, id)
-        
-                if file_path:
-                    comment['file_path'] = file_path
-                else:
-                    print(f'Error: Failed to download image for frame {frame_number}')
+    if user.str_command_download in comment['comment']:
+        get_one_img(comment)
+
+    elif user.str_command_gif in comment['comment']:
+        async with httpx.AsyncClient() as session:
+            tasks = []
+            start_frame = int(comment['frame_number'])
+            end_frame = start_frame + 20
+
+            for frame_number in range(start_frame, end_frame):
+                tasks.append(get_manys_img(session, frame_number, comment['id']))
+
+            file_paths = await asyncio.gather(*tasks)
+
+            comment['file_path'] = file_paths[0]
+
+
+
+def get_img(comment: dict) -> None:
+    if 'comment' in comment and 'id' in comment:
+        asyncio.run(img_fetch(comment))
+
+
+
     
-

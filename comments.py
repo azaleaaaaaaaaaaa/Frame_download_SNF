@@ -1,17 +1,18 @@
 import httpx
-from time import sleep
-from os import environ
-from data import fb_url, FB_TOKEN
+import time
+import os
+import data
 
 
 def get_comments() -> list:
-    comments_list = []  
-    dados = {'fields': 'comments.limit(100)', 'limit': '100', 'access_token': FB_TOKEN}
+    comments_list: list[dict] = []  
+    dados = {'fields': 'comments.limit(100)', 'limit': '100', 'access_token': data.FB_TOKEN}
 
     try:
         retries = 0
-        while retries < 5:
-            response = httpx.get(f'{fb_url}/{environ.get("PAGE_ID")}/posts', params=dados, timeout=10)
+        max_retries = 5
+        while retries < max_retries:
+            response = httpx.get(f'{data.fb_url}/{os.environ.get("PAGE_ID")}/posts', params=dados, timeout=10)
 
             if response.status_code == 200:
                 response_data = response.json()
@@ -31,12 +32,15 @@ def get_comments() -> list:
                     break
             
             else:
-                print(f"Failed to get posts: {response.status_code}")
+                print(f"Error module comments: status_code != 200 {response.status_code}")
                           
-            sleep(1) # Wait for 1 seconds before making the next request
+            time.sleep(2) # Wait for 2 seconds before making the next request
+
+        if retries == max_retries:
+            print("Error module comments: Failed to get comments after maximum retries")
 
     except httpx._exceptions as e:
-        print(f"Request error: {e}")
+        print(f"Error module comments: {e}")
 
     return comments_list
 
