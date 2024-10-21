@@ -1,4 +1,5 @@
 import subprocess
+import os
 import math
 
 def subtitle(comment: dict) -> None:
@@ -36,10 +37,11 @@ def subtitle(comment: dict) -> None:
             annotate = '-annotate'
             annotate_position = '+0+20'
             output_name = file_path
+            image_magick_command = 'magick' if os.name == 'nt' else 'convert'
 
             # Criação da lista de comandos
             command = [
-                'magick',  # Ou 'convert' se estiver usando no Linux
+                image_magick_command,  # Ou 'convert' se estiver usando no Linux
                 file_path,
                 gravity, gravity_value,
                 background_color, background_color_value,

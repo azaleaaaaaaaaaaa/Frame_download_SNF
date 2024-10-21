@@ -1,6 +1,7 @@
 import subprocess
 import httpx
 import data
+import os
 
 def upload_gif(comment: dict):
     if not comment['file_path'].endswith('.gif'):
@@ -17,7 +18,7 @@ def upload_gif(comment: dict):
             response = httpx.post(data.giphy_url, files=files, data=dados, timeout=15)
             if response.status_code == 200:
                 response_data = response.json()
-                link = f'https://giphy.com/gifs/{response_data["data"]["id"]}'
+                link = 'https://giphy.com/gifs/' + response_data.get("data", {}).get("id", '')
                 comment['link'] = link
                 print(f'GIF enviado com sucesso! ID da GIF: {link}')
 
@@ -28,23 +29,26 @@ def upload_gif(comment: dict):
 
 
 def make_gif(comment: dict) -> None:
-    if 'file_path' in comment:
+    file_path = comment.get('file_path')
+    if file_path:
+        image_magick_command = 'magick' if os.name == 'nt' else 'convert'
         commands = [
-            'magick',
-            '-delay','20',
+            image_magick_command,
+            '-delay', '30',
             '-loop', '0',
-            f'{comment["file_path"]}/frame*.jpg',
-            '-colors', '128',
+            f'{file_path}/frame*.jpg',
+            '-colors', '32',
             '-fuzz', '10%',
             '-layers', 'optimize',
-            f'{comment["file_path"]}/animation.gif',
+            f'{file_path}/animation.gif',
         ]
+
         try:
             subprocess.run(commands, check=True)
-            comment['file_path'] += '/animation.gif'
+            comment['file_path'] = f'{file_path}/animation.gif'
             print('GIF criado com sucesso')
         except subprocess.CalledProcessError as e:
             print(f'Erro ao criar o GIF: {e}')
-    
-    upload_gif(comment)
+
+        upload_gif(comment)
 
