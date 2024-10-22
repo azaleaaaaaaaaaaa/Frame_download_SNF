@@ -14,6 +14,10 @@ def get_one_img(comment: dict) -> None:
         with open(file_path, 'wb') as file:
             file.write(response.content)
             comment['file_path'] = file_path
+    elif response.status_code == 404:
+        save_ids.save_id(comment, 'Imagem não encontrada, reposta ignorada, id salvo: ')
+    else:
+        print(f"Error downloading frame {comment['frame_number']}: {response.status_code} {response.text}")
 
 
 
