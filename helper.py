@@ -1,7 +1,7 @@
 import random
 
 
-links = [
+gif_links = [
     'https://tenor.com/u6VPyMH13as.gif',
     'https://tenor.com/musZYHpVfgn.gif',
     'https://tenor.com/mgwzEa6YgQd.gif',
@@ -36,7 +36,7 @@ links = [
 ]
 
 def get_link() -> str:
-    return random.choice(links)
+    return random.choice(gif_links)
 
 
 
