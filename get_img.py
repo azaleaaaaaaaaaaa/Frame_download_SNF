@@ -12,7 +12,11 @@ def get_one_img(comment: dict) -> None:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, 'wb') as file:
             file.write(response.content)
-        comment['file_path'] = file_path
+            comment['file_path'] = file_path
+    else:
+        comment['file_path'] = ''
+        comment['id'] = ''
+
 
 
 
