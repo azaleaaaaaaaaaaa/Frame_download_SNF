@@ -1,16 +1,15 @@
-name: down-bot  # Esse bot é responsável por rodar os scripts de download dos frames 
+name: down-bot
 
 on:
-    workflow_dispatch:
-    schedule:
-      - cron: "0 */3 * * *"
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */3 * * *"
 
-concurrency:  # previne que o workflow seja executado em paralelo
-  group: down-bot-${{ github.ref }}
+concurrency:
+  group: down-bot  
   cancel-in-progress: false
 
 jobs:
-  
   run-down-bot:
     runs-on: ubuntu-latest
 
@@ -20,7 +19,6 @@ jobs:
       GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
 
     steps:
-
       - name: Cache pip
         uses: actions/cache@v3
         with:
@@ -37,7 +35,7 @@ jobs:
         with:
           python-version: 3.13
           architecture: x64 
-      
+
       - name: Upgrade pip to latest stable
         run: |
           python -m pip install --upgrade pip
