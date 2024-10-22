@@ -12,7 +12,7 @@ def get_id():
         max_retries: int = 3
         while retries < max_retries:
             try:
-                response = httpx.get(f'{data.fb_url}/me?access_token={data.FB_TOKEN}', timeout=5)
+                response = httpx.get(f'{data.fb_url}/me?access_token={data.FB_TOKEN}', timeout=10)
                 if response.status_code != 200:
                     print(f"Failed to get page ID: {response.status_code} {response.content}")
                     retries += 1

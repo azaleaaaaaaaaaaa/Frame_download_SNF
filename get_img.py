@@ -5,7 +5,7 @@ import data
 import user
 
 def get_one_img(comment: dict) -> None:
-    response = httpx.get(f'{data.github_url}/frame_{comment["frame_number"]}.jpg', timeout=10)
+    response = httpx.get(f'{data.github_url}/frame_{comment["frame_number"]}.jpg', timeout=20)
 
     if response.status_code == 200:
         file_path = f'images/{comment["id"]}/frame_{comment["frame_number"]}.jpg'
@@ -18,7 +18,7 @@ def get_one_img(comment: dict) -> None:
 
 async def get_manys_img(session: httpx.AsyncClient, frame_number: str, id: str) -> None:
     try:
-        response = await session.get(f'{data.github_url}/frame_{frame_number}.jpg', timeout=10)
+        response = await session.get(f'{data.github_url}/frame_{frame_number}.jpg', timeout=15)
 
         if response.status_code == 200:
             file_path = os.path.join(f'images/{id}/frame_{frame_number}.jpg')

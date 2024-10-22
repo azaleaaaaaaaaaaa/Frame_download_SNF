@@ -13,7 +13,7 @@ def imgBB(comment: dict) -> None:
             with open(comment['file_path'], 'rb') as file:
                 files = {'image': file}
                 
-                response = httpx.post(data.img_url, data=dados, files=files, timeout=10)
+                response = httpx.post(data.img_url, data=dados, files=files, timeout=15)
                 if response.status_code == 200:
                     response_data = response.json()
                     link = response_data['data']['url']

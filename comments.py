@@ -15,7 +15,7 @@ def get_comments() -> list:
         current_page: int = 0
         
         while retries < max_retries and current_page < max_pages:
-            response = httpx.get(f'{data.fb_url}/{os.environ.get("PAGE_ID")}/posts', params=dados, timeout=10)
+            response = httpx.get(f'{data.fb_url}/{os.environ.get("PAGE_ID")}/posts', params=dados, timeout=15)
 
             if response.status_code == 200:
                 response_data = response.json()
