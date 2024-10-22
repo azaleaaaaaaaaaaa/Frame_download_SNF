@@ -29,6 +29,20 @@ def upload_gif(comment: dict):
         print(f'Erro ao abrir o arquivo: {e}')
 
 
+def ordenar_frames(file_path: str) -> None:
+    for frame in os.listdir(file_path):
+        if frame.endswith('.jpg'):
+            # Extrai o número do nome do arquivo
+            num = int(frame.split('.')[0].split('_')[-1])
+            # Renomeia o arquivo com zeros à esquerda
+            new_name = f'frame_{num:04d}.jpg'
+            old_path = os.path.join(file_path, frame)
+            new_path = os.path.join(file_path, new_name)
+            os.rename(old_path, new_path)
+
+
+
+
 def make_gif(comment: dict) -> None:
     if data.GIPHY_API_KEY and comment.get('file_path', None):
         file_path = comment.get('file_path')
@@ -41,6 +55,8 @@ def make_gif(comment: dict) -> None:
             image_files = glob.glob(f'{file_path}/frame*.jpg')
 
             if image_files:
+                # Renomeia os arquivos com zeros à esquerda
+                ordenar_frames(file_path)
                 # Comando para redimensionar as imagens
                 resize_image_command = resize_image_command_base + ['-resize', '90%'] + image_files
 
