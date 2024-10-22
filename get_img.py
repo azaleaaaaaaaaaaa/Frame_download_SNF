@@ -53,8 +53,12 @@ async def img_fetch(comment: dict) -> None:
                 tasks.append(get_manys_img(session, frame_number, comment['id']))
 
             file_paths = await asyncio.gather(*tasks)
-
-            comment['file_path'] = file_paths[0]
+            
+            if file_paths == ['Failed to download frame 0: Status 404']:
+                comment['file_path'] = ''
+                comment['id'] = ''
+            else:
+                comment['file_path'] = file_paths[0]
 
 
 
