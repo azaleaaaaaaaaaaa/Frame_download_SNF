@@ -2,6 +2,7 @@ import subprocess
 import httpx
 import data
 import os
+import glob
 
 def upload_gif(comment: dict):
     if not comment['file_path'].endswith('.gif'):
@@ -29,25 +30,27 @@ def upload_gif(comment: dict):
 
 
 def make_gif(comment: dict) -> None:
-
     if data.GIPHY_API_KEY and comment.get('file_path', None):
         file_path = comment.get('file_path')
         if file_path:
-
+            # Define comandos de acordo com o sistema operacional
             image_magick_command = 'magick' if os.name == 'nt' else 'convert'
+            resize_image_command_base = ['magick', 'mogrify'] if os.name == 'nt' else ['mogrify']
 
-            resize_image_command = [
-                image_magick_command,
-                'mogrify',
-                '-resize', '90%', 
-                f'{file_path}/frame*.jpg'            
-            ]
+            # Obtém todos os arquivos de imagem .jpg no diretório
+            image_files = glob.glob(f'{file_path}/frame*.jpg')
 
-            try:
-                subprocess.run(resize_image_command, check=True) 
-            except subprocess.CalledProcessError as e:
-                print(f'Erro ao redimensionar as imagens: {e}')
+            if image_files:
+                # Comando para redimensionar as imagens
+                resize_image_command = resize_image_command_base + ['-resize', '90%'] + image_files
 
+                try:
+                    subprocess.run(resize_image_command, check=True)
+                    print("Imagens redimensionadas com sucesso!")
+                except subprocess.CalledProcessError as e:
+                    print(f'Erro ao redimensionar as imagens: {e}')
+
+            # Comando para criar o GIF
             commands = [
                 image_magick_command,
                 '-delay', '30',
@@ -61,8 +64,10 @@ def make_gif(comment: dict) -> None:
             try:
                 subprocess.run(commands, check=True)
                 comment['file_path'] = f'{file_path}/animation.gif'
+                print("GIF criado com sucesso!")
             except subprocess.CalledProcessError as e:
                 print(f'Erro ao criar o GIF: {e}')
 
+            # Função de upload do GIF
             upload_gif(comment)
 
