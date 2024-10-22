@@ -15,7 +15,7 @@ message_response_helper: str = (
     "!dl - Download current frame.\n"
     "\t!dl -f FRAME - Download specified frame.\n"
     "\t!dl -t TEXT - Add text to frame before download.\n\n"
-    "!gif - Create GIF from next 20 frames.\n"
+    "!gif - Create GIF from next 30 frames.\n"
     "\t!gif -f FRAME - Create GIF from specified frame.\n\n"
     "!help - Show this message.\n\n"
     "{LINK_GIF}."

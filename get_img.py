@@ -43,10 +43,10 @@ async def get_manys_img(session: httpx.AsyncClient, frame_number: str, id: str) 
 # Função principal para gerar o gif
 async def img_fetch(comment: dict) -> None:
 
-    if user.str_command_download in comment.get('comment'):
+    if user.str_command_download in comment.get('comment', '').lower():
         get_one_img(comment)
 
-    elif user.str_command_gif in comment['comment']:
+    elif user.str_command_gif in comment['comment'].lower():
         async with httpx.AsyncClient() as session:
             tasks = []
             start_frame = int(comment['frame_number'])

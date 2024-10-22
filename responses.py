@@ -9,7 +9,7 @@ from subtitle import subtitle
 
 def response(comment: dict) -> None:
 
-    if (comment.get('file_path') and comment.get('id')) or (comment.get('message') == user.str_command_help.lower()):
+    if (comment.get('file_path') and comment.get('id')) or (comment.get('message', '').lower() == user.str_command_help.lower()):
 
         if user.str_command_gif.lower() in comment.get('comment', '').lower():
             make_gif(comment)

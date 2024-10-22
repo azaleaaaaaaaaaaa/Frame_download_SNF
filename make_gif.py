@@ -15,7 +15,7 @@ def upload_gif(comment: dict):
             dados = {
                 'api_key': data.GIPHY_API_KEY
             }
-            response = httpx.post(data.giphy_url, files=files, data=dados, timeout=15)
+            response = httpx.post(data.giphy_url, files=files, data=dados, timeout=20)
             if response.status_code == 200:
                 response_data = response.json()
                 link = 'https://giphy.com/gifs/' + response_data.get("data", {}).get("id", '')
@@ -33,14 +33,27 @@ def make_gif(comment: dict) -> None:
     if data.GIPHY_API_KEY and comment.get('file_path', None):
         file_path = comment.get('file_path')
         if file_path:
+
             image_magick_command = 'magick' if os.name == 'nt' else 'convert'
+
+            resize_image_command = [
+                image_magick_command,
+                'mogrify',
+                '-resize', '90%', 
+                f'{file_path}/frame*.jpg'            
+            ]
+
+            try:
+                subprocess.run(resize_image_command, check=True) 
+            except subprocess.CalledProcessError as e:
+                print(f'Erro ao redimensionar as imagens: {e}')
+
             commands = [
                 image_magick_command,
                 '-delay', '30',
                 '-loop', '0',
                 f'{file_path}/frame*.jpg',
                 '-colors', '32',
-                '-fuzz', '10%',
                 '-layers', 'optimize',
                 f'{file_path}/animation.gif',
             ]
