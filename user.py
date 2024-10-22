@@ -10,14 +10,16 @@ message_response_frame_download: str = 'Filename: Frame {FRAME}\n\nResolution: 1
 
 message_response_gif_download: str = 'Filename: Animation\n\nFormat: GIF\nDownload Link: {LINK}'
 
-message_response_helper: str = '\n\nCommands:\n\n\
-"!dl" - Downloads the frame.\n\
-    \t"!dl -f FRAME" - Downloads especified frame.\n\
-    \t"!dl -t TEXT" - Adds text to the frame before generating the download link.\n\n\
-"!gif" - Generates a GIF using the next 20 frames from the current frame.\n\n\
-    \t"!gif -f FRAME" - Generates a GIF starting from frame especified.\n\n\
-"!help" - Shows this message.\n\n\
-    {LINK_GIF}.'
+message_response_helper: str = (
+    "\n\n"
+    "!dl - Download current frame.\n"
+    "\t!dl -f FRAME - Download specified frame.\n"
+    "\t!dl -t TEXT - Add text to frame before download.\n\n"
+    "!gif - Create GIF from next 20 frames.\n"
+    "\t!gif -f FRAME - Create GIF from specified frame.\n\n"
+    "!help - Show this message.\n\n"
+    "{LINK_GIF}."
+)
 
 
 
