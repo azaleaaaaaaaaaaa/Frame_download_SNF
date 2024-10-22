@@ -4,11 +4,6 @@ from time import sleep
 
 
 
-
-
-
-
-
 def imgBB(comment: dict) -> None:
     retries = 0
     while retries < 3:

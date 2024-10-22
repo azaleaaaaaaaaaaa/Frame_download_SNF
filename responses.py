@@ -7,16 +7,14 @@ from subtitle import subtitle
 
 
 
-
-
 def response(comment: dict) -> None:
 
-    if comment.get('file_path') and comment.get('id') or comment.get('message') == 'Helper':
+    if (comment.get('file_path') and comment.get('id')) or (comment.get('message') == user.str_command_help.lower()):
 
-        if user.str_command_gif in comment.get('comment'):
+        if user.str_command_gif.lower() in comment.get('comment', '').lower():
             make_gif(comment)
         
-        if user.str_command_download in comment.get('comment'):
+        if user.str_command_download.lower() in comment.get('comment', '').lower():
             subtitle(comment)
             imgBB(comment)
         
