@@ -4,10 +4,10 @@
 
 
 
-def save_id(comment: dict) -> None:
+def save_id(comment: dict, message: str) -> None:
     with open('replyed_ids.txt', 'a', encoding='utf-8') as file:
         file.write(f'{comment["id"]}\n')
-        print('comment id: {}'.format(comment["id"]), 'replyed and saved')
+        print(message, comment["id"])
 
 
 

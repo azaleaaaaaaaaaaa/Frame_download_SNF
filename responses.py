@@ -21,5 +21,5 @@ def response(comment: dict) -> None:
         
         post_fb(comment)
         publish_fb(comment)
-        save_id(comment)
+        save_id(comment, 'Comentário respondido e id salvo: ')
 

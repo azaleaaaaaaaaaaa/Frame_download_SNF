@@ -3,6 +3,7 @@ import asyncio
 import os
 import data
 import user
+import save_ids
 
 def get_one_img(comment: dict) -> None:
     response = httpx.get(f'{data.github_url}/frame_{comment["frame_number"]}.jpg', timeout=20)
@@ -13,10 +14,6 @@ def get_one_img(comment: dict) -> None:
         with open(file_path, 'wb') as file:
             file.write(response.content)
             comment['file_path'] = file_path
-    else:
-        comment['file_path'] = ''
-        comment['id'] = ''
-
 
 
 
@@ -31,10 +28,12 @@ async def get_manys_img(session: httpx.AsyncClient, frame_number: str, id: str) 
                 file.write(response.content)
             return f'images/{id}'
         else:
-            return f"Failed to download frame {frame_number}: Status {response.status_code}"
+            print(f"Error downloading frame {frame_number}: {response.status_code} {response.text}")
+            return ''
 
     except Exception as e:
-        return f"Error downloading frame {frame_number}: {str(e)}"
+        print(f"Error downloading frame {frame_number}: {e}")
+        return ''
 
 
 # Função principal para gerar o gif
@@ -47,18 +46,17 @@ async def img_fetch(comment: dict) -> None:
         async with httpx.AsyncClient() as session:
             tasks = []
             start_frame = int(comment['frame_number'])
-            end_frame = start_frame + 20
+            end_frame = start_frame + 30 # Tamanho do gif = 30 frames
 
             for frame_number in range(start_frame, end_frame):
                 tasks.append(get_manys_img(session, frame_number, comment['id']))
 
             file_paths = await asyncio.gather(*tasks)
             
-            if file_paths == ['Failed to download frame 0: Status 404']:
-                comment['file_path'] = ''
-                comment['id'] = ''
-            else:
+            if file_paths[0] != '':
                 comment['file_path'] = file_paths[0]
+            else:
+                save_ids.save_id(comment, 'Imagem(s) não encontrada(s), reposta ignorada, id salvo: ')
 
 
 

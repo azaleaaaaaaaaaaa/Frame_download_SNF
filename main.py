@@ -31,5 +31,6 @@ if __name__ == '__main__':
     start: float = time.time()
     while (time.time() - start) < (180 * 60):  # 3 hours
         main()
-        time.sleep(50)
         print('Sleeping for 50 seconds...\n')
+        time.sleep(50)
+        
