@@ -30,7 +30,7 @@ def upload_gif(comment: dict):
 
 def make_gif(comment: dict) -> None:
 
-    if data.GIPHY_API_KEY:
+    if data.GIPHY_API_KEY and comment.get('file_path'):
         file_path = comment.get('file_path')
         if file_path:
             image_magick_command = 'magick' if os.name == 'nt' else 'convert'
