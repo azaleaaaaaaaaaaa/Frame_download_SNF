@@ -1,5 +1,5 @@
 import user
-from make_gif import make_gif
+from make_gif import run_make_gif
 from imgBB import imgBB
 from facebook import post_fb, publish_fb
 from save_ids import save_id
@@ -12,7 +12,7 @@ def response(comment: dict) -> None:
     if (comment.get('file_path') and comment.get('id')) or (comment.get('message', '').lower() == user.str_command_help.lower()):
 
         if user.str_command_gif.lower() in comment.get('comment', '').lower():
-            make_gif(comment)
+            run_make_gif(comment)
         
         if user.str_command_download.lower() in comment.get('comment', '').lower():
             subtitle(comment)
