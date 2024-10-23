@@ -25,11 +25,12 @@ async def upload_gif(comment: dict):
                         link = 'https://giphy.com/gifs/' + response_data.get("data", {}).get("id", '')
                         comment['link'] = link
                         print(f'GIF enviada para o servidor do Giphy: {link}')
+                        break
                     else:
                         print(f'Erro ao enviar a GIF: {response.status_code}, {response.text}')
         except Exception as e:
             print(f'Erro ao abrir o arquivo: {e}')
-            print('tentando novamente em 5 segundos...')
+            print('tentando novamente em 2 segundos...')
             await asyncio.sleep(2)
 
 
@@ -42,8 +43,9 @@ def ordenar_frames(file_path: str) -> None:
             # Renomeia o arquivo com zeros à esquerda
             new_name = f'frame_{num:04d}.jpg'
             old_path = os.path.join(file_path, frame)
-            new_path = os.path.join(file_path, new_name)
-            os.rename(old_path, new_path)
+            if not os.path.exists(os.path.join(file_path, new_name)):
+                new_path = os.path.join(file_path, new_name)
+                os.rename(old_path, new_path)
 
 
 async def resize_images(image_files: list, resize_image_command_base: list):
