@@ -2,12 +2,8 @@ name: down-bot
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 */3 * * *"
-
-concurrency:
-  group: down-bot  
-  cancel-in-progress: false
+  # schedule:
+  #   - cron: "0 */3 * * *"
 
 jobs:
   run-down-bot:
@@ -52,3 +48,16 @@ jobs:
         with:
           commit_message: "updated"
           file_pattern: replyed_ids.txt
+      
+      - name: acionar o workflow
+        run: |
+          WORKFLOW_NAME="down-bot.yml"
+          REPO="${{ github.repository }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"ref\":\"$BRANCH_NAME\"}" \
+            "https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW_NAME/dispatches"
+          
