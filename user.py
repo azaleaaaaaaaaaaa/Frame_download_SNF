@@ -1,6 +1,6 @@
 # configuracoes do repositorio github para pegar os frames
-REPO_OWNER: str =     'JavaRaf'
-REPO: str =           'FRIEREN-FIO'
+REPO_OWNER: str =     'azaleaaaaaaaaaaa'
+REPO: str =           'makeinee'
 BRANCH: str =         'master'
 FRAMES_FOLDER: str =  'frames'
 
