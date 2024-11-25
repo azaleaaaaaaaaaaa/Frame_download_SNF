@@ -5,7 +5,7 @@ from facebook import post_fb, publish_fb
 from save_ids import save_id
 from subtitle import subtitle
 
-
+# module that deals with responding to commands and sending them to Facebook and saving the ids
 
 def response(comment: dict) -> None:
 

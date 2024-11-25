@@ -22,10 +22,10 @@ def finder_frame_title_post(comment: dict) -> None:
                     number = re.findall(r'Frame\s*(\d+)', response_data['message'])
                     if number:
                         comment['frame_number'] = number[0]
-                        break  # Sai do loop se o frame for encontrado
+                        break  # break the loop if there is no frame number
             else:
                 print(f"Error module finder_frame_title_post: {response.status_code} {response.content}")
-                break  # Sai do loop se não for um erro temporário (ex.: 404, 403)
+                break  # break the loop if you can't get the episode number
 
         except httpx.RequestError as e:
             print(f"Error module finder_frame_title_post: {e}.\nRetrying ({retries + 1}/{max_retries})...")
@@ -60,7 +60,7 @@ def finder_commands(comment: dict) -> None:
     elif user.str_command_help.lower() in comment.get('comment', '').lower():
         helper.helper(comment)
     
-    else: # remove o comentário e o id se nao tiver comandos
+    else: # remove comment and id if not present command
         comment['comment'] = ''
         comment['id'] = ''
 

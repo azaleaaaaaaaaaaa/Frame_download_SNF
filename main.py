@@ -11,13 +11,13 @@ import os
 
 def main():
 
-    get_id()
-    if os.environ.get('PAGE_ID') == None:
+    get_id() # get page id
+    if os.environ.get('PAGE_ID') == None: # if page id is not specified then exit with error
         print('Failed to get page id: No page ID found or wrong page ID')
         os.sys.exit(1)
     
     comments_list: list[dict] = get_comments()
-    remove_replyed_ids(comments_list)
+    remove_replyed_ids(comments_list) # remove comments with id in replyed_ids.txt
 
 
     for comment in comments_list:

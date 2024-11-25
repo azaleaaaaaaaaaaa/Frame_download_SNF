@@ -4,7 +4,7 @@ import time
 import data
 
 
-# função para obter o id da pagina do facebook e armazenar na variável ambiente PAGE_ID
+# function to get the facebook page id and store it in the PAGE_ID environment variable
 
 def get_id():
     if 'PAGE_ID' not in os.environ:

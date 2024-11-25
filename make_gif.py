@@ -4,12 +4,13 @@ import data
 import os
 import glob
 
+# upload gif to giphy server
 async def upload_gif(comment: dict):
     if not comment['file_path'].endswith('.gif'):
         print("O arquivo precisa ser uma GIF.")
         return
     
-    # Verifique se o caminho fornecido está correto
+
     retries = 0
     while  retries < 3:
         try:
@@ -33,14 +34,14 @@ async def upload_gif(comment: dict):
             print('tentando novamente em 2 segundos...')
             await asyncio.sleep(2)
 
-
+# sort files by frame number to create gif
 def ordenar_frames(file_path: str) -> None:
     """Função síncrona para renomear arquivos"""
     for frame in os.listdir(file_path):
         if frame.endswith('.jpg'):
-            # Extrai o número do nome do arquivo
+            # extract frame number 
             num = int(frame.split('.')[0].split('_')[-1])
-            # Renomeia o arquivo com zeros à esquerda
+            # rename frame with 4 digits, zeros in front
             new_name = f'frame_{num:04d}.jpg'
             old_path = os.path.join(file_path, frame)
             if not os.path.exists(os.path.join(file_path, new_name)):
@@ -48,6 +49,7 @@ def ordenar_frames(file_path: str) -> None:
                 os.rename(old_path, new_path)
 
 
+# resize images to create gif small
 async def resize_images(image_files: list, resize_image_command_base: list):
     """Função assíncrona para redimensionar imagens"""
     resize_image_command = resize_image_command_base + ['-resize', '30%'] + image_files
@@ -64,18 +66,18 @@ async def make_gif(comment: dict) -> None:
     if data.GIPHY_API_KEY and comment.get('file_path', None):
         file_path = comment.get('file_path')
         if file_path:
-            # Define comandos de acordo com o sistema operacional
+            # Define commands according to the operating system
             image_magick_command = 'magick' if os.name == 'nt' else 'convert'
             resize_image_command_base = ['magick', 'mogrify'] if os.name == 'nt' else ['mogrify']
 
-            # Obtém todos os arquivos de imagem .jpg no diretório
+            # Gets all .jpg image files in the directory
             image_files = glob.glob(f'{file_path}/frame*.jpg')
 
             if image_files:
-                # Redimensiona as imagens de forma assíncrona (processo assíncrono)
+                # Resizes images asynchronously (asynchronous process)
                 await resize_images(image_files, resize_image_command_base)
 
-            # Comando para criar o GIF
+            # command to create gif
             commands = [
                 image_magick_command,
                 '-delay', '30',

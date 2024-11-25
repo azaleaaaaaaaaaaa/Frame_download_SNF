@@ -1,9 +1,5 @@
 
-
-
-
-
-
+# save user ids that have been replied
 def save_id(comment: dict, message: str) -> None:
     with open('replyed_ids.txt', 'a', encoding='utf-8') as file:
         file.write(f'{comment["id"]}\n')
@@ -11,6 +7,7 @@ def save_id(comment: dict, message: str) -> None:
 
 
 
+# used to handle already responded ids. Avoid duplications
 def remove_replyed_ids(comments_list: list) -> None:
 
     replyed_ids = []

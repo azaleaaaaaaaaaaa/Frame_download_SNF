@@ -30,14 +30,14 @@ def get_comments() -> list:
                 if response_data.get('paging') and response_data['paging'].get('next'):
                     after = response_data['paging']['cursors'].get('after', '')
                     dados['after'] = after
-                    current_page += 1  # Incrementa a contagem de páginas
+                    current_page += 1  # Increment the current page
                 else:
                     break
             
             else:
                 print(f"Error module comments: status_code != 200 {response.status_code}")
                 retries += 1
-                time.sleep(2)  # Espera 2 segundos antes de tentar novamente
+                time.sleep(2)  # wait 2 seconds before retrying
 
         if retries == max_retries:
             print("Error module comments: Failed to get comments after maximum retries")

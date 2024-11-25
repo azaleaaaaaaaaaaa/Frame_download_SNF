@@ -3,7 +3,7 @@ import data
 from time import sleep
 
 
-
+# module for uploading image in imgBB
 def imgBB(comment: dict) -> None:
     retries = 0
     while retries < 3:

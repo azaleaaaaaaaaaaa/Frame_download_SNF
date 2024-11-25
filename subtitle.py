@@ -7,22 +7,22 @@ def subtitle(comment: dict) -> None:
         if 'subtitle' in comment and 'file_path' in comment and 'frame_number' in comment:
             subtitle = comment['subtitle']
 
-            # Divide o subtítulo em palavras
+            # break subtitle into lines 
             subtitle_partes = subtitle.split(' ')
 
-            # Calcula o número de linhas e ajusta o tamanho do fundo
+            # Calculates the number of lines and adjusts the background size
             lines = math.ceil(len(subtitle_partes) / 5)
             backgound_size = f'0x{str(int(lines) * 120)}'
 
-            # Insere quebras de linha a cada 5 palavras, mas evita a última quebra de linha desnecessária
+            # Inserts line breaks every 5 words, but avoids the last unnecessary line break
             subtitle_com_quebras = []
             for i in range(0, len(subtitle_partes), 5):
                 subtitle_com_quebras.append(' '.join(subtitle_partes[i:i+5]))
 
-            # Junta as linhas com '\n' para que o texto seja exibido corretamente
+            # Join the lines with '\n' so that the text is displayed correctly
             subtitle = '\n'.join(subtitle_com_quebras).strip()
 
-            # Configuração dos parâmetros do comando
+            # parameters to the image magick
             file_path = comment['file_path']
             gravity = '-gravity'
             gravity_value = 'North'
@@ -37,11 +37,10 @@ def subtitle(comment: dict) -> None:
             annotate = '-annotate'
             annotate_position = '+0+20'
             output_name = file_path
-            image_magick_command = 'magick' if os.name == 'nt' else 'convert'
+            image_magick_command = 'magick' if os.name == 'nt' else 'convert' #  magick to windows || convert to linux
 
-            # Criação da lista de comandos
             command = [
-                image_magick_command,  # Ou 'convert' se estiver usando no Linux
+                image_magick_command,  
                 file_path,
                 gravity, gravity_value,
                 background_color, background_color_value,
@@ -54,7 +53,7 @@ def subtitle(comment: dict) -> None:
             ]
 
             try:
-                # Executa o comando
+                # Run the image magick command
                 subprocess.run(command, check=True)
             except subprocess.CalledProcessError as e:
                 print(f"Ocorreu um erro ao executar o comando: {e}")

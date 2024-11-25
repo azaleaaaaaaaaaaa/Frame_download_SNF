@@ -23,8 +23,6 @@ message_response_helper: str = (
 )
 
 
-
-
 # commands
 str_command_download: str =  '!dl'
 str_command_gif: str =       '!gif'
