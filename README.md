@@ -1,23 +1,30 @@
+# Setup
 
-Setup: Define the following tokens before running the application:
+Define the following tokens before running the application:  
 
-FB_TOKEN: Facebook token (required).
-IMG_TOKEN: Imgbb token (required).
-GIPHY_API_KEY: Giphy API key (optional).
-Commands:
+- `FB_TOKEN`: Facebook token (required).  
+- `IMG_TOKEN`: Imgbb token (required).  
+- `GIPHY_API_KEY`: Giphy API key (optional).  
 
-Command: !dl
-Description: Generates a download link for a specific frame.
-Options:
+# Commands
 
--f: Specify the frame number to download.
--t: Add custom text to the frame before generating the link.
-Example Usage:
-!dl -f 15 -t "Custom Text": Downloads frame 15 with the text "Custom Text" added.
-Command: !gif
-Description: Creates a GIF using 20 frames starting from a specified frame.
-Options:
+## Command: `!dl`  
+**Description:** Generates a download link for a specific frame.  
 
--f: Define the starting frame for the GIF.
-Example Usage:
-!gif -f 10: Creates a GIF starting from frame 10.
+**Options:**  
+- `-f`: Specifies the frame number to download.  
+- `-t`: Adds custom text to the frame before generating the link.  
+
+**Example Usage:**  
+`!dl -f 15 -t "Custom Text"`  
+(Downloads frame 15 with the text "Custom Text" added).  
+
+## Command: `!gif`  
+**Description:** Creates a GIF using 20 frames starting from a specified frame.  
+
+**Options:**  
+- `-f`: Defines the starting frame for the GIF.  
+
+**Example Usage:**  
+`!gif -f 10`  
+(Creates a GIF starting from frame 10).  
