@@ -1,9 +1,9 @@
-name: down-bot
+name: Trigger Bot
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: "0 */3 * * *"
+  #schedule:
+    #- cron: "0 */3 * * *"
 
 permissions:
   contents: write
@@ -18,6 +18,9 @@ jobs:
       GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
 
     steps:
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
       - name: Cache pip
         uses: actions/cache@v3
         with:
@@ -29,7 +32,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Configurar Python
+      - name: Setup Python
         uses: actions/setup-python@v3
         with:
           python-version: 3.13
@@ -39,53 +42,51 @@ jobs:
         run: |
           python -m pip install --upgrade pip
 
-      - name: Instalar Dependências
+      - name: Install dependencies
         run: |
           python -m pip install -r requirements.txt
 
-      - name: Executar script Python
+      - name: Run Python script
         run: python main.py
 
-      - name: Update arquivos
+      - name: Update replyed_ids.txt
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "updated"
           file_pattern: replyed_ids.txt
           push_options: '--force'
-          
-      
-      - name: Acionar o workflow
+
+      - name: Activate the workflow
         run: |
-            WORKFLOW_NAME="down-bot.yml"
             REPO="${{ github.repository }}"
             BRANCH_NAME="${{ github.ref_name }}"
-  
+
+            # Recuperar o workflow_id do único workflow no repositório
+            workflow_id=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/$REPO/actions/workflows | jq -r '.workflows[0].id')
+
             retries=0
             max_retries=3
-  
+
             while [[ $retries -lt $max_retries ]]; do
               response=$(curl -o /dev/null -s -w "%{http_code}" -X POST \
-                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                 -H "Accept: application/vnd.github.v3+json" \
                 -d "{\"ref\":\"$BRANCH_NAME\"}" \
-                "https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW_NAME/dispatches")
-  
+                "https://api.github.com/repos/$REPO/actions/workflows/$workflow_id/dispatches")
+
               if [[ $response -ge 200 && $response -lt 300 ]]; then
-                echo "Workflow acionado com sucesso!"
+                echo "Workflow triggered successfully!"
                 exit 0
               else
-                echo "Erro ao acionar workflow (tentativa $((retries + 1))/$max_retries): HTTP $response"
+                echo "Error when triggering workflow (attempt $((retries + 1))/$max_retries): HTTP $response"
                 retries=$((retries + 1))
                 sleep 5
               fi
             done
-  
+
             if [[ $retries -eq $max_retries ]]; then
-              echo "Falha após $max_retries tentativas."
+              echo "Failed to trigger workflow after $max_retries attempts."
               exit 1
             fi
-  
-
-
-
-          
