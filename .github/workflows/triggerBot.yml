@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   run-down-bot:
@@ -61,26 +62,37 @@ jobs:
             REPO="${{ github.repository }}"
             BRANCH_NAME="${{ github.ref_name }}"
 
+            echo "Repository: $REPO"
+            echo "Branch Name: $BRANCH_NAME"
+
             # Recuperar o workflow_id do único workflow no repositório
-            workflow_id=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            WORKFLOW_DATA=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "Accept: application/vnd.github.v3+json" \
-              https://api.github.com/repos/$REPO/actions/workflows | jq -r '.workflows[0].id')
+              https://api.github.com/repos/$REPO/actions/workflows)
+            echo "Workflow Data: $WORKFLOW_DATA"
+
+            WORKFLOW_ID=$(echo "$WORKFLOW_DATA" | jq -r '.workflows[0].id')
+            echo "Workflow ID: $WORKFLOW_ID"
 
             retries=0
             max_retries=3
 
             while [[ $retries -lt $max_retries ]]; do
-              response=$(curl -o /dev/null -s -w "%{http_code}" -X POST \
+              response=$(curl -o response_body.txt -s -w "%{http_code}" -X POST \
                 -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                 -H "Accept: application/vnd.github.v3+json" \
                 -d "{\"ref\":\"$BRANCH_NAME\"}" \
-                "https://api.github.com/repos/$REPO/actions/workflows/$workflow_id/dispatches")
+                "https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW_ID/dispatches")
+
+              echo "HTTP Response Code: $response"
+              echo "HTTP Response Body:"
+              cat response_body.txt
 
               if [[ $response -ge 200 && $response -lt 300 ]]; then
                 echo "Workflow triggered successfully!"
                 exit 0
               else
-                echo "Error when triggering workflow (attempt $((retries + 1))/$max_retries): HTTP $response"
+                echo "Error when triggering workflow (attempt $((retries + 1))/$max_retries)"
                 retries=$((retries + 1))
                 sleep 5
               fi
