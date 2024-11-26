@@ -29,7 +29,7 @@ def main():
 
 if __name__ == '__main__':
     start: float = time.time()
-    while (time.time() - start) < (5 * 60):  # 5 minutes
+    while (time.time() - start) < (180 * 60):  # 3 hours
         main()
         print('Sleeping for 50 seconds...\n')
         time.sleep(50)
