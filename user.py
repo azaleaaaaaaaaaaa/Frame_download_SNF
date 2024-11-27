@@ -1,6 +1,6 @@
 # information to find the frames
-REPO_OWNER: str =     'JavaRaf' # your github username
-REPO: str =           'FRIEREN-FIO' # repository where frames are saved
+REPO_OWNER: str =     'azaleaaaaaaaaaaa' # your github username
+REPO: str =           'makeinee' # repository where frames are saved
 BRANCH: str =         'master' # branch where frames are saved
 FRAMES_FOLDER: str =  'frames' # directory where frames are saved
 
