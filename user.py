@@ -1,6 +1,6 @@
 # information to find the frames
 REPO_OWNER: str =     'azaleaaaaaaaaaaa' # your github username
-REPO: str =           'makeinee' # repository where frames are saved
+REPO: str =           'makeinee2' # repository where frames are saved
 BRANCH: str =         'master' # branch where frames are saved
 FRAMES_FOLDER: str =  'frames' # directory where frames are saved
 
